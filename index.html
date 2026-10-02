@@ -126,7 +126,7 @@ select.input{appearance:none;background-image:linear-gradient(45deg,transparent 
 .stchip{display:inline-flex;align-items:center;gap:8px;padding:5px 16px 5px 5px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:15px;min-height:46px;transition:all .15s}
 .stchip:hover{border-color:var(--brand)}
 .stchip.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
-.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none;overflow:hidden}
 .av-lg{width:52px;height:52px;font-size:28px;border-radius:16px}
 .hero{background:linear-gradient(135deg,var(--brand-soft) 0%,var(--panel) 55%,var(--sun-soft) 130%);border:1px solid var(--line);border-radius:28px}
 .kpi .v{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
@@ -361,6 +361,38 @@ button.ag:active{transform:scale(.99)}
   main{padding:0!important;max-width:none!important}
   .card{box-shadow:none;break-inside:avoid}
 }
+
+/* ---- Avatares y mascotas ---- */
+.av svg{width:100%;height:100%;display:block}
+.avprev{width:100%;max-width:340px;margin:0 auto}
+.avprev svg,.stscene svg{display:block;width:100%;height:auto;border-radius:20px}
+.avtabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 2px}
+.avtabs .chipf{flex:1 1 84px;min-height:44px}
+.avlab{font-size:13px;color:var(--soft);font-weight:600;margin:14px 0 8px}
+.avsw{display:flex;flex-wrap:wrap;gap:10px}
+.avsw button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);padding:0}
+.avsw button.on{outline:3px solid var(--ink);outline-offset:2px}
+.avgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:560px){.avgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.avopt{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:14px;color:var(--ink);padding:0 10px}
+.avopt.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
+.lucia-big svg,.js-lucia svg{width:100%;height:100%;display:block}
+.stscene{width:min(100%,15em);margin:14px auto 0}
+.stscene.sm{width:min(100%,11.5em)}
+.compbar{position:sticky;bottom:0;display:flex;justify-content:flex-end;align-items:flex-end;gap:6px;height:5.4em;margin-top:6px;pointer-events:none}
+.compbar svg{display:block;height:100%;width:auto}
+.compbar .cface{height:70%}
+.compbar .cpet{height:100%}
+.petwrap{transform-box:fill-box;transform-origin:50% 100%}
+.petwrap.hop{animation:pethop .75s ease-out}
+.petwrap.tilt{animation:pettilt 1.5s ease-in-out}
+@keyframes pethop{0%{transform:translateY(0)}30%{transform:translateY(-16%)}55%{transform:translateY(0)}75%{transform:translateY(-8%)}100%{transform:translateY(0)}}
+@keyframes pettilt{0%,100%{transform:rotate(0)}30%,70%{transform:rotate(-9deg)}}
+.player.calm .petwrap{animation:none!important}
+.rav{display:inline-flex;align-items:flex-end;gap:.04em;line-height:1}
+.rav svg{display:block}
+.rme svg{width:1.3em;height:1.3em}
+.rpet svg{width:1.05em;height:1.08em}
 </style>
 </head>
 <body>
@@ -968,26 +1000,253 @@ const ICONS = {
 };
 const ic = (n,cls='w-5 h-5') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" class="${cls}" aria-hidden="true">${ICONS[n]||''}</svg>`;
 
-function lucia(){
-  return `<svg viewBox="0 0 64 64" role="img" aria-label="Lucía" style="width:100%;height:100%">
-    <circle cx="32" cy="32" r="32" fill="var(--sun-soft)"/>
-    <path d="M13 60c2.5-10 9.5-15 19-15s16.5 5 19 15z" fill="#2F58CD"/>
-    <path d="M26 45h12l-6 6z" fill="#fff" opacity=".9"/>
-    <path d="M17 34c-1.5-13 6-21 15-21s16.5 8 15 21c-.5 7-2 12-5 15l-2-12H24l-2 12c-3-3-4.5-8-5-15z" fill="#5A3826"/>
-    <circle cx="32" cy="31" r="12.5" fill="#F2C7A5"/>
-    <path d="M19.5 29c1.5-7.5 6.5-11 12.5-11s11 3.5 12.5 11c-4-4-8-5.5-12.5-5.5S23.5 25 19.5 29z" fill="#5A3826"/>
-    <circle cx="27.3" cy="31.5" r="1.7" fill="#2A1C14"/><circle cx="36.7" cy="31.5" r="1.7" fill="#2A1C14"/>
-    <circle cx="24.5" cy="35.5" r="2.2" fill="#F08F80" opacity=".45"/><circle cx="39.5" cy="35.5" r="2.2" fill="#F08F80" opacity=".45"/>
-    <path d="M28 37c2.4 2.4 5.6 2.4 8 0" stroke="#2A1C14" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <circle cx="19.8" cy="35" r="1.4" fill="var(--sun)"/><circle cx="44.2" cy="35" r="1.4" fill="var(--sun)"/>
-  </svg>`;
+/* =========================================================
+   Avatares: alumno, mascota y Lucía (dibujo vectorial por capas)
+   ========================================================= */
+const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+const AV = {
+  SKIN:['#F5D5B8','#E8B98F','#C68A5E','#8D5A3B','#5C3A25'],
+  HAIR:['#2B1B12','#6B3F1E','#E3B54A','#B5442A','#8A8A8A','#3C5AA6','#D4537E','#7F77DD'],
+  EYE:['#3B2A1E','#2F6B4F','#2E6FB5','#6B7280','#8B5A2B'],
+  TOPC:['#7F77DD','#1D9E75','#D85A30','#D4537E','#2F58CD','#EF9F27','#444441','#E24B4A'],
+  PETC:['#C68A5E','#F1EFE8','#888780','#EF9F27','#2C2C2A','#FAC775'],
+  BG:[['#E6F1FB','#B5D4F4'],['#EAF3DE','#C0DD97'],['#FAEEDA','#FAC775'],['#FBEAF0','#F4C0D1']],
+  HS:[['corto','Corto'],['largo','Suelto'],['bob','Flequillo'],['coleta','Coleta'],['mono','Moño'],['rizado','Rizado'],['afro','Afro'],['calvo','Sin pelo']],
+  EX:[['sonrisa','Sonrisa'],['grande','Risa'],['sorpresa','Sorpresa'],['calma','Tranquila']],
+  FX:[['nada','Nada'],['pecas','Pecas']],
+  TS:[['camiseta','Camiseta'],['sudadera','Sudadera'],['camisa','Camisa'],['vestido','Vestido'],['peto','Peto']],
+  PT:[['liso','Liso'],['rayas','Rayas'],['lunares','Lunares'],['cuadros','Cuadros']],
+  AC:[['ninguno','Nada'],['gafas','Gafas'],['gorra','Gorra'],['lazo','Lazo'],['gorro','Gorro'],['auric','Auriculares']],
+  PS:[['ninguna','Sin mascota'],['perro','Perro'],['gato','Gato'],['conejo','Conejo'],['pajaro','Pájaro']],
+  PA:[['ninguno','Nada'],['collar','Collar'],['lazo','Lazo'],['fiesta','Gorro de fiesta'],['gafas','Gafas de sol']]
+};
+const AV_NUM = {skin:'SKIN', hc:'HAIR', tc:'TOPC', eye:'EYE', pc:'PETC', bg:'BG'};
+const AV_STR = {hs:'HS', ex:'EX', fx:'FX', top:'TS', pt:'PT', acc:'AC', pet:'PS', pa:'PA'};
+const AV_DEF = {skin:1, hs:'corto', hc:1, eye:0, ex:'sonrisa', fx:'nada', top:'camiseta', pt:'liso', tc:0, acc:'ninguno', bg:0, pet:'perro', pc:0, pa:'ninguno'};
+const LUCIA_DEF = {skin:0, hs:'largo', hc:2, eye:0, ex:'sonrisa', fx:'nada', top:'camisa', pt:'liso', tc:4, acc:'ninguno', bg:2, pet:'ninguna', pc:0, pa:'ninguno'};
+const AV_CYC = 16;
+let AV_N = 0;
+
+function avCfg(c, base){
+  const b = Object.assign({}, base||AV_DEF), o = Object.assign({}, b, c||{});
+  for(const k in AV_NUM){ if(!(Number.isInteger(o[k]) && o[k]>=0 && o[k]<AV[AV_NUM[k]].length)) o[k]=b[k]; }
+  for(const k in AV_STR){ if(!AV[AV_STR[k]].some(x=>x[0]===o[k])) o[k]=b[k]; }
+  return o;
+}
+function avRand(){
+  const r = n=>Math.floor(Math.random()*n), pk = l=>l[r(l.length)][0];
+  return {skin:r(AV.SKIN.length), hc:r(AV.HAIR.length), tc:r(AV.TOPC.length), eye:r(AV.EYE.length), pc:r(AV.PETC.length), bg:r(AV.BG.length),
+    hs:pk(AV.HS), ex:pk(AV.EX), fx:pk(AV.FX), top:pk(AV.TS), pt:pk(AV.PT), acc:pk(AV.AC), pet:pk(AV.PS.slice(1)), pa:pk(AV.PA)};
+}
+function avAnimOn(){ return !REDUCED && !(P && P.a && P.a.calm); }
+
+/* Busto del avatar en coordenadas locales 0..200 x 0..220 */
+function avBust(c, o){
+  const sk=AV.SKIN[c.skin], hc=AV.HAIR[c.hc], tc=AV.TOPC[c.tc], eye=AV.EYE[c.eye], Tp=c.top, H=c.hs, an=!!o.anim, id=o.id;
+  const base = Tp==='peto' ? '#F1EFE8' : tc, long = Tp==='sudadera' || Tp==='camisa';
+  const TOR = 'M30 220 Q30 162 80 150 L120 150 Q170 162 170 220Z';
+  const g = an && !!o.greet, t0 = (-(AV_CYC*0.40 - (o.t0==null ? 2 : o.t0))).toFixed(2);
+  let s = '<defs><clipPath id="tor'+id+'"><path d="'+TOR+'"/></clipPath></defs>';
+  if(H==='largo') s += '<path d="M52 92 Q50 38 100 38 Q150 38 148 92 L154 168 Q100 180 46 168Z" fill="'+hc+'"/>';
+  if(H==='bob') s += '<path d="M52 96 Q50 40 100 40 Q150 40 148 96 L148 130 Q100 142 52 130Z" fill="'+hc+'"/>';
+  if(H==='coleta') s += '<ellipse cx="154" cy="104" rx="12" ry="28" transform="rotate(-18 154 104)" fill="'+hc+'"/>';
+  if(H==='afro') s += '<circle cx="100" cy="68" r="58" fill="'+hc+'"/>';
+  if(Tp==='sudadera') s += '<path d="M66 140 Q100 176 134 140 L138 160 Q100 190 62 160Z" fill="'+tc+'"/><path d="M66 140 Q100 176 134 140 L138 160 Q100 190 62 160Z" fill="#000" fill-opacity=".18"/>';
+  s += '<path d="'+TOR+'" fill="'+base+'"/>';
+  if(Tp!=='peto' && c.pt!=='liso'){
+    let p = '';
+    if(c.pt==='rayas') for(let y=158; y<220; y+=14) p += '<rect x="30" y="'+y+'" width="140" height="6" fill="#fff" fill-opacity=".3"/>';
+    if(c.pt==='lunares') for(let y=162; y<220; y+=16) for(let x=40+((y/16|0)%2)*8; x<170; x+=16) p += '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="#fff" fill-opacity=".4"/>';
+    if(c.pt==='cuadros'){ for(let y=156; y<220; y+=16) p += '<rect x="30" y="'+y+'" width="140" height="5" fill="#fff" fill-opacity=".22"/>'; for(let x=40; x<170; x+=16) p += '<rect x="'+x+'" y="150" width="5" height="70" fill="#fff" fill-opacity=".22"/>'; }
+    s += '<g clip-path="url(#tor'+id+')">'+p+'</g>';
+  }
+  const arm = x => long
+    ? '<rect x="'+x+'" y="158" width="26" height="58" rx="13" fill="'+base+'"/><circle cx="'+(x+13)+'" cy="217" r="9" fill="'+sk+'"/>'
+    : '<rect x="'+(x+4)+'" y="172" width="18" height="46" rx="9" fill="'+sk+'"/><rect x="'+x+'" y="158" width="26" height="30" rx="13" fill="'+base+'"/><circle cx="'+(x+13)+'" cy="219" r="9" fill="'+sk+'"/>';
+  const waveA = g ? '<animateTransform attributeName="transform" type="rotate" dur="'+AV_CYC+'s" begin="'+t0+'s" repeatCount="indefinite" values="0 165 166;0 165 166;-140 165 166;-170 165 166;-140 165 166;-170 165 166;-140 165 166;0 165 166;0 165 166" keyTimes="0;0.4;0.43;0.46;0.49;0.52;0.55;0.58;1"/>' : '';
+  s += '<g>'+arm(22)+'</g><g>'+waveA+arm(152)+'</g>';
+  if(Tp==='peto') s += '<rect x="70" y="178" width="60" height="44" rx="8" fill="'+tc+'"/><path d="M76 180 L84 152 L92 152 L86 180Z" fill="'+tc+'"/><path d="M124 180 L116 152 L108 152 L114 180Z" fill="'+tc+'"/><circle cx="82" cy="184" r="3" fill="#EF9F27"/><circle cx="118" cy="184" r="3" fill="#EF9F27"/>';
+  s += '<rect x="87" y="120" width="26" height="36" rx="10" fill="'+sk+'"/><ellipse cx="100" cy="140" rx="18" ry="8" fill="#000" fill-opacity=".1"/>';
+  if(Tp==='camiseta' || Tp==='vestido') s += '<path d="M80 150 Q100 170 120 150Z" fill="'+sk+'"/>';
+  if(Tp==='vestido') s += '<rect x="30" y="184" width="140" height="8" fill="#000" fill-opacity=".18" clip-path="url(#tor'+id+')"/><path d="M80 150 Q100 170 120 150" stroke="#fff" stroke-width="3" fill="none"/>';
+  if(Tp==='sudadera') s += '<rect x="72" y="194" width="56" height="22" rx="8" fill="#000" fill-opacity=".15"/><line x1="92" y1="160" x2="92" y2="178" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="108" y1="160" x2="108" y2="178" stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+  if(Tp==='camisa') s += '<path d="M84 150 L100 174 L90 152Z" fill="#fff"/><path d="M116 150 L100 174 L110 152Z" fill="#fff"/><circle cx="100" cy="186" r="3" fill="#fff"/><circle cx="100" cy="200" r="3" fill="#fff"/><circle cx="100" cy="214" r="3" fill="#fff"/>';
+  s += '<circle cx="58" cy="96" r="8" fill="'+sk+'"/><circle cx="142" cy="96" r="8" fill="'+sk+'"/><ellipse cx="58" cy="97" rx="3.5" ry="5" fill="#000" fill-opacity=".08"/><ellipse cx="142" cy="97" rx="3.5" ry="5" fill="#000" fill-opacity=".08"/><circle cx="100" cy="92" r="42" fill="'+sk+'"/>';
+  const up = c.ex==='sorpresa' ? -5 : 0;
+  s += '<path d="M76 '+(82+up)+' Q84 '+(78+up)+' 92 '+(82+up)+'" stroke="'+hc+'" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M108 '+(82+up)+' Q116 '+(78+up)+' 124 '+(82+up)+'" stroke="'+hc+'" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+  [84,116].forEach(x=>{
+    s += '<ellipse cx="'+x+'" cy="94" rx="7.2" ry="6.2" fill="#fff"/><circle cx="'+x+'" cy="94" r="4.4" fill="'+eye+'"/><circle cx="'+x+'" cy="94" r="2" fill="#1a1a1a"/><circle cx="'+(x+1.6)+'" cy="92.4" r="1.2" fill="#fff"/>';
+    s += '<ellipse cx="'+x+'" cy="94" rx="8.6" ry="0" fill="'+sk+'">'+(an ? '<animate attributeName="ry" values="0;0;8;0" keyTimes="0;0.93;0.965;1" dur="4.2s" repeatCount="indefinite"/>' : '')+'</ellipse>';
+  });
+  s += '<path d="M100 99 Q97 105 101 106" stroke="#000" stroke-opacity=".22" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  s += '<circle cx="74" cy="108" r="6" fill="#E8736C" fill-opacity=".3"/><circle cx="126" cy="108" r="6" fill="#E8736C" fill-opacity=".3"/>';
+  if(c.fx==='pecas') s += '<g fill="#8D5A3B" fill-opacity=".5"><circle cx="70" cy="102" r="1.4"/><circle cx="76" cy="104" r="1.4"/><circle cx="72" cy="107" r="1.4"/><circle cx="130" cy="102" r="1.4"/><circle cx="124" cy="104" r="1.4"/><circle cx="128" cy="107" r="1.4"/></g>';
+  const M = {
+    sonrisa:'<path d="M88 111 Q100 123 112 111" stroke="#7A2E2A" stroke-width="3" fill="none" stroke-linecap="round"/>',
+    grande:'<path d="M86 108 Q100 130 114 108Z" fill="#7A2E2A"/><ellipse cx="100" cy="120" rx="6" ry="3.2" fill="#E8736C"/>',
+    sorpresa:'<ellipse cx="100" cy="116" rx="5.5" ry="7" fill="#7A2E2A"/>',
+    calma:'<path d="M91 114 Q100 119 109 114" stroke="#7A2E2A" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  };
+  s += M[c.ex];
+  const cap = '<path d="M58 88 Q56 46 100 44 Q144 46 142 88 Q132 66 100 64 Q68 66 58 88Z" fill="'+hc+'"/><path d="M76 56 Q92 49 112 52" stroke="#fff" stroke-opacity=".22" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  if(H==='mono') s += '<circle cx="100" cy="38" r="15" fill="'+hc+'"/>';
+  if(H==='corto' || H==='largo' || H==='coleta' || H==='mono') s += cap;
+  if(H==='coleta') s += '<circle cx="146" cy="80" r="5" fill="'+AV.TOPC[(c.tc+2)%AV.TOPC.length]+'"/>';
+  if(H==='bob') s += '<path d="M57 92 Q54 44 100 42 Q146 44 143 92 L143 78 Q100 68 57 78Z" fill="'+hc+'"/>';
+  if(H==='afro') s += '<path d="M60 84 Q62 58 100 54 Q138 58 140 84 Q130 66 100 64 Q70 66 60 84Z" fill="'+hc+'"/>';
+  if(H==='rizado') s += '<g fill="'+hc+'"><circle cx="66" cy="74" r="16"/><circle cx="84" cy="58" r="18"/><circle cx="106" cy="54" r="18"/><circle cx="126" cy="60" r="17"/><circle cx="140" cy="76" r="15"/><circle cx="58" cy="92" r="11"/><circle cx="144" cy="94" r="11"/></g>';
+  const A = c.acc;
+  if(A==='gafas') s += '<g stroke="#2C2C2A" stroke-width="3" fill="none"><circle cx="84" cy="94" r="12"/><circle cx="116" cy="94" r="12"/><line x1="96" y1="94" x2="104" y2="94"/><line x1="72" y1="92" x2="60" y2="90"/><line x1="128" y1="92" x2="140" y2="90"/></g>';
+  if(A==='gorra') s += '<path d="M56 72 Q58 36 100 36 Q142 36 144 72Z" fill="'+tc+'"/><path d="M64 68 L150 70 Q152 77 64 75Z" fill="'+tc+'"/><path d="M64 68 L150 70 Q152 77 64 75Z" fill="#000" fill-opacity=".2"/>';
+  if(A==='lazo') s += '<g fill="#D4537E"><polygon points="130,52 110,40 110,64"/><polygon points="130,52 150,40 150,64"/><circle cx="130" cy="52" r="6"/></g>';
+  if(A==='gorro'){ const gc=AV.TOPC[(c.tc+2)%AV.TOPC.length]; s += '<path d="M56 68 Q56 30 100 30 Q144 30 144 68Z" fill="'+gc+'"/><rect x="54" y="58" width="92" height="12" rx="6" fill="'+gc+'"/><rect x="54" y="58" width="92" height="12" rx="6" fill="#000" fill-opacity=".18"/><circle cx="100" cy="26" r="8" fill="#fff"/>'; }
+  if(A==='auric') s += '<path d="M54 92 Q54 38 100 38 Q146 38 146 92" stroke="#5F5E5A" stroke-width="7" fill="none"/><rect x="47" y="84" width="14" height="26" rx="7" fill="#D4537E"/><rect x="139" y="84" width="14" height="26" rx="7" fill="#D4537E"/>';
+  if(o.bubble && g){
+    const nm = String(o.name||'').trim().split(/\s+/)[0].slice(0,12).replace(/[&<>"']/g,'');
+    const txt = nm ? '¡Hola, '+nm+'!' : '¡Hola!', w = Math.round(txt.length*10.4+30);
+    s += '<g opacity="0"><animate attributeName="opacity" dur="'+AV_CYC+'s" begin="'+t0+'s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.41;0.43;0.57;0.59;1"/>'
+      + '<rect x="30" y="-14" width="'+w+'" height="40" rx="14" fill="#fff"/><polygon points="58,25 76,25 66,40" fill="#fff"/>'
+      + '<text x="44" y="12" font-size="19" font-weight="700" fill="#2C2C2A" font-family="Atkinson Hyperlegible, Verdana, sans-serif">'+txt+'</text></g>';
+  }
+  return s;
+}
+
+/* Mascota en coordenadas locales: origen abajo en el centro */
+function avPet(c, o){
+  const f=AV.PETC[c.pc], P_=c.pet, an=!!o.anim, g=an && !!o.greet;
+  const t1 = (-(AV_CYC*0.70 - (o.t1==null ? 5 : o.t1))).toFixed(2);
+  const lid = (x,y,r,d)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+r+'" ry="0" fill="'+f+'">'+(an?'<animate attributeName="ry" values="0;0;'+(r+1)+';0" keyTimes="0;0.92;0.96;1" dur="'+d+'s" repeatCount="indefinite"/>':'')+'</ellipse>';
+  const tail = (d,cx,cy,w)=>'<g>'+(an?'<animateTransform attributeName="transform" type="rotate" values="-10 '+cx+' '+cy+';14 '+cx+' '+cy+';-10 '+cx+' '+cy+'" dur="'+w+'s" repeatCount="indefinite"/>':'')+'<path d="'+d+'" stroke="'+f+'" stroke-width="9" fill="none" stroke-linecap="round"/></g>';
+  let s = '<ellipse cx="0" cy="-1" rx="32" ry="5" fill="#000" fill-opacity=".12"/>';
+  let ht=-85, ey=-62;
+  if(P_!=='pajaro'){
+    if(P_==='perro'){ s += tail('M22 -22 Q44 -30 40 -52',22,-22,0.9);
+      s += '<ellipse cx="-27" cy="-54" rx="9" ry="19" transform="rotate(12 -27 -54)" fill="'+f+'"/><ellipse cx="-27" cy="-54" rx="9" ry="19" transform="rotate(12 -27 -54)" fill="#000" fill-opacity=".22"/><ellipse cx="27" cy="-54" rx="9" ry="19" transform="rotate(-12 27 -54)" fill="'+f+'"/><ellipse cx="27" cy="-54" rx="9" ry="19" transform="rotate(-12 27 -54)" fill="#000" fill-opacity=".22"/>'; }
+    if(P_==='gato'){ ht=-84; ey=-60; s += tail('M24 -8 Q58 -8 52 -42',24,-8,1.2);
+      s += '<polygon points="-26,-72 -24,-94 -8,-80" fill="'+f+'"/><polygon points="-22,-76 -22,-88 -13,-80" fill="#ED93B1"/><polygon points="26,-72 24,-94 8,-80" fill="'+f+'"/><polygon points="22,-76 22,-88 13,-80" fill="#ED93B1"/>'; }
+    if(P_==='conejo'){ ht=-80; ey=-60;
+      s += '<circle cx="24" cy="-14" r="9" fill="#F1EFE8"/><ellipse cx="-11" cy="-92" rx="7.5" ry="22" transform="rotate(-6 -11 -92)" fill="'+f+'"/><ellipse cx="-11" cy="-92" rx="3.5" ry="15" transform="rotate(-6 -11 -92)" fill="#ED93B1" fill-opacity=".7"/><ellipse cx="11" cy="-92" rx="7.5" ry="22" transform="rotate(6 11 -92)" fill="'+f+'"/><ellipse cx="11" cy="-92" rx="3.5" ry="15" transform="rotate(6 11 -92)" fill="#ED93B1" fill-opacity=".7"/>'; }
+    s += '<ellipse cx="0" cy="-22" rx="27" ry="22" fill="'+f+'"/><ellipse cx="0" cy="-18" rx="14" ry="14" fill="#fff" fill-opacity=".35"/><ellipse cx="-13" cy="-4" rx="10" ry="6" fill="'+f+'"/><ellipse cx="13" cy="-4" rx="10" ry="6" fill="'+f+'"/>';
+    const hr = P_==='conejo' ? 25 : 27, hy = P_==='conejo' ? -56 : -58;
+    s += '<circle cx="0" cy="'+hy+'" r="'+hr+'" fill="'+f+'"/>';
+    if(P_==='perro') s += '<circle cx="-12" cy="-62" r="9" fill="#000" fill-opacity=".2"/><ellipse cx="0" cy="-50" rx="13" ry="10" fill="#F1EFE8" fill-opacity=".85"/><ellipse cx="0" cy="-55" rx="5" ry="3.5" fill="#2C2C2A"/><path d="M0 -52 L0 -47 M0 -47 Q-6 -42 -10 -46 M0 -47 Q6 -42 10 -46" stroke="#2C2C2A" stroke-width="1.8" fill="none" stroke-linecap="round"/><ellipse cx="0" cy="-41" rx="4" ry="5" fill="#ED93B1"/><circle cx="-10" cy="-63" r="3.4" fill="#2C2C2A"/><circle cx="10" cy="-63" r="3.4" fill="#2C2C2A"/><circle cx="-9" cy="-64" r="1" fill="#fff"/><circle cx="11" cy="-64" r="1" fill="#fff"/>'+lid(-10,-63,4.2,5)+lid(10,-63,4.2,5);
+    if(P_==='gato') s += '<path d="M0 -84 L0 -76 M-7 -83 L-6 -77 M7 -83 L6 -77" stroke="#000" stroke-opacity=".3" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="0" cy="-50" rx="10" ry="7" fill="#fff" fill-opacity=".5"/><ellipse cx="-10" cy="-60" rx="4" ry="4.6" fill="#EF9F27"/><ellipse cx="10" cy="-60" rx="4" ry="4.6" fill="#EF9F27"/><ellipse cx="-10" cy="-60" rx="1.2" ry="3.8" fill="#2C2C2A"/><ellipse cx="10" cy="-60" rx="1.2" ry="3.8" fill="#2C2C2A"/><polygon points="-3,-53 3,-53 0,-49" fill="#ED93B1"/><path d="M0 -49 Q-5 -44 -9 -47 M0 -49 Q5 -44 9 -47" stroke="#2C2C2A" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M-14 -52 L-34 -56 M-14 -50 L-34 -48 M14 -52 L34 -56 M14 -50 L34 -48" stroke="#888780" stroke-width="1.2"/>'+lid(-10,-60,5,5.6)+lid(10,-60,5,5.6);
+    if(P_==='conejo') s += '<circle cx="-15" cy="-50" r="5" fill="#ED93B1" fill-opacity=".35"/><circle cx="15" cy="-50" r="5" fill="#ED93B1" fill-opacity=".35"/><circle cx="-9" cy="-60" r="3.2" fill="#2C2C2A"/><circle cx="9" cy="-60" r="3.2" fill="#2C2C2A"/><circle cx="-8" cy="-61" r="1" fill="#fff"/><circle cx="10" cy="-61" r="1" fill="#fff"/><ellipse cx="0" cy="-52" rx="3.5" ry="2.6" fill="#ED93B1"/><path d="M0 -49 L0 -46 M0 -46 Q-4 -42 -7 -45 M0 -46 Q4 -42 7 -45" stroke="#2C2C2A" stroke-width="1.6" fill="none" stroke-linecap="round"/><rect x="-3" y="-45" width="6" height="5" rx="1" fill="#fff"/>'+lid(-9,-60,4.2,6)+lid(9,-60,4.2,6);
+  } else {
+    ht=-64; ey=-42;
+    s += '<ellipse cx="-5" cy="-70" rx="3" ry="8" transform="rotate(-15 -5 -70)" fill="'+f+'"/><ellipse cx="0" cy="-73" rx="3" ry="9" fill="'+f+'"/><ellipse cx="5" cy="-70" rx="3" ry="8" transform="rotate(15 5 -70)" fill="'+f+'"/>';
+    s += '<circle cx="0" cy="-34" r="30" fill="'+f+'"/><ellipse cx="-30" cy="-30" rx="8" ry="16" transform="rotate(10 -30 -30)" fill="'+f+'"/><ellipse cx="-30" cy="-30" rx="8" ry="16" transform="rotate(10 -30 -30)" fill="#000" fill-opacity=".2"/><ellipse cx="30" cy="-30" rx="8" ry="16" transform="rotate(-10 30 -30)" fill="'+f+'"/><ellipse cx="30" cy="-30" rx="8" ry="16" transform="rotate(-10 30 -30)" fill="#000" fill-opacity=".2"/><ellipse cx="0" cy="-26" rx="17" ry="19" fill="#fff" fill-opacity=".35"/>';
+    s += '<circle cx="-18" cy="-34" r="5" fill="#ED93B1" fill-opacity=".4"/><circle cx="18" cy="-34" r="5" fill="#ED93B1" fill-opacity=".4"/><circle cx="-11" cy="-42" r="3.3" fill="#2C2C2A"/><circle cx="11" cy="-42" r="3.3" fill="#2C2C2A"/><circle cx="-10" cy="-43" r="1" fill="#fff"/><circle cx="12" cy="-43" r="1" fill="#fff"/><polygon points="-6,-37 6,-37 0,-27" fill="#EF9F27"/><path d="M-9 -5 L-9 0 M9 -5 L9 0" stroke="#EF9F27" stroke-width="3" stroke-linecap="round"/>'+lid(-11,-42,4.2,5.4)+lid(11,-42,4.2,5.4);
+  }
+  const pa = c.pa;
+  if(pa==='collar') s += '<rect x="-17" y="'+(P_==='pajaro'?-32:-34)+'" width="34" height="6" rx="3" fill="#D85A30"/><circle cx="0" cy="'+(P_==='pajaro'?-25:-27)+'" r="4" fill="#EF9F27"/>';
+  if(pa==='lazo') s += '<g transform="translate(16 '+(ht+6)+')" fill="#D4537E"><polygon points="0,0 -11,-7 -11,7"/><polygon points="0,0 11,-7 11,7"/><circle r="3.5"/></g>';
+  if(pa==='fiesta') s += '<g transform="translate(0 '+(ht+2)+')"><path d="M-12 0 L0 -26 L12 0Z" fill="#7F77DD"/><circle cx="-3" cy="-8" r="2" fill="#fff"/><circle cx="3" cy="-15" r="2" fill="#fff"/><circle cy="-27" r="4" fill="#EF9F27"/></g>';
+  if(pa==='gafas') s += '<g fill="#2C2C2A"><rect x="-17" y="'+(ey-5)+'" width="14" height="10" rx="4"/><rect x="3" y="'+(ey-5)+'" width="14" height="10" rx="4"/><rect x="-4" y="'+(ey-1)+'" width="8" height="2"/></g>';
+  const hopA = g ? '<animateTransform attributeName="transform" type="translate" dur="'+AV_CYC+'s" begin="'+t1+'s" repeatCount="indefinite" values="0 0;0 0;0 -14;0 0;0 -14;0 0;0 0" keyTimes="0;0.7;0.72;0.75;0.78;0.81;1"/>' : '';
+  const bobA = an ? '<animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 0" dur="1.8s" repeatCount="indefinite"/>' : '';
+  let snd = '';
+  if(o.bubble && g){
+    const txt = {perro:'¡Guau guau!', gato:'¡Miau!', conejo:'¡Hop, hop!', pajaro:'¡Pío pío!'}[P_] || '', w = Math.round(txt.length*9.4+26);
+    snd = '<g opacity="0"><animate attributeName="opacity" dur="'+AV_CYC+'s" begin="'+t1+'s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.71;0.72;0.82;0.84;1"/>'
+      + '<rect x="'+(-14-w/2)+'" y="-140" width="'+w+'" height="32" rx="12" fill="#fff"/><polygon points="-7,-109 7,-109 0,-98" fill="#fff"/>'
+      + '<text x="-14" y="-118" font-size="17" font-weight="700" text-anchor="middle" fill="#2C2C2A" font-family="Atkinson Hyperlegible, Verdana, sans-serif">'+txt+'</text></g>';
+  }
+  return '<g class="petwrap '+(o.mood||'')+'"><g>'+hopA+'<g>'+bobA+s+'</g>'+snd+'</g></g>';
+}
+
+function avScene(c, o){
+  o = o||{};
+  const an = o.anim==null ? avAnimOn() : !!o.anim, id = ++AV_N, b = AV.BG[c.bg], hasPet = c.pet!=='ninguna', ax = hasPet ? 14 : 70;
+  const label = String(o.label||'Avatar').replace(/[&<>"']/g,'');
+  let s = '<svg viewBox="0 0 340 260" role="img" aria-label="'+label+'"><defs><clipPath id="sc'+id+'"><rect width="340" height="260" rx="14"/></clipPath></defs><g clip-path="url(#sc'+id+')">';
+  s += '<rect width="340" height="260" fill="'+b[0]+'"/><g fill="#fff" fill-opacity=".6"><ellipse cx="290" cy="40" rx="22" ry="9"/><ellipse cx="306" cy="34" rx="14" ry="8"/></g><rect y="214" width="340" height="46" fill="'+b[1]+'"/>';
+  s += '<g transform="translate('+ax+' 24)">'+avBust(c,{id:id, anim:an, greet:o.greet, t0:o.t0, name:o.name, bubble:true})+'</g>';
+  if(hasPet) s += '<g transform="translate(282 254) scale(1.15)">'+avPet(c,{anim:an, greet:o.greet, t1:o.t1, mood:o.mood, bubble:true})+'</g>';
+  return s+'</g></svg>';
+}
+function avFace(c){
+  const id = ++AV_N;
+  return '<svg viewBox="30 8 140 140" aria-hidden="true">'+avBust(c,{id:id, anim:false})+'</svg>';
+}
+function avBadgeSVG(c, o){
+  const id = ++AV_N, an = !!o.anim;
+  return '<svg viewBox="-4 14 208 208" role="img" aria-label="'+(o.label||'Avatar')+'"><defs><clipPath id="lc'+id+'"><circle cx="100" cy="118" r="104"/></clipPath></defs><circle cx="100" cy="118" r="104" fill="'+(o.bg||'var(--sun-soft)')+'"/><g clip-path="url(#lc'+id+')">'+avBust(c,{id:id, anim:an, greet:o.greet, t0:o.t0})+'</g></svg>';
+}
+function avBadge(s){ return s && s.av ? avFace(avCfg(s.av)) : esc((s&&s.avatar)||'🙂'); }
+
+/* Lucía: personalizable desde Ajustes (cabecera, agenda, premios…) */
+function lucia(mode){
+  const c = avCfg(DB && DB.settings && DB.settings.lucia, LUCIA_DEF);
+  const an = mode!=='static' && avAnimOn();
+  return avBadgeSVG(c, {anim:an, greet:an && mode==='greet', t0:7, label:'Lucía'});
+}
+function refreshLucia(){ $$('.js-lucia').forEach(el=>{ el.innerHTML = lucia('static'); }); }
+
+/* Alumno en el modo alumno */
+function stScene(mood, small){
+  if(!P || !P.st || !P.st.av) return '';
+  return '<div class="stscene'+(small?' sm':'')+'">'+avScene(avCfg(P.st.av), {anim:avAnimOn(), greet:true, name:P.st.name, mood:mood||'', t0:2.5, t1:5.5, label:'Tu avatar'})+'</div>';
+}
+function avCompanion(st, mood){
+  const c = avCfg(st.av), an = avAnimOn(), hasPet = c.pet!=='ninguna';
+  const face = '<span class="cface'+(hasPet?'':' petwrap '+mood)+'">'+avBadgeSVG(c, {anim:an, label:'Tu avatar'})+'</span>';
+  const pet = hasPet ? '<span class="cpet"><svg viewBox="-60 -118 120 124" aria-hidden="true">'+avPet(c,{anim:an, mood:mood})+'</svg></span>' : '';
+  return '<div class="compbar" aria-hidden="true">'+face+pet+'</div>';
+}
+function avRunner(st){
+  const c = avCfg(st.av), an = avAnimOn();
+  const pet = c.pet!=='ninguna' ? '<span class="rpet"><svg viewBox="-60 -118 120 124" aria-hidden="true">'+avPet(c,{anim:an})+'</svg></span>' : '';
+  return '<span class="rav">'+pet+'<span class="rme">'+avBadgeSVG(c,{anim:an, label:'Tu avatar'})+'</span></span>';
+}
+
+/* Creador de avatar (alumno y Lucía). Modifica el objeto C en su sitio. */
+function avCreator(host, C, o){
+  o = o||{};
+  let T = 'cuerpo';
+  const tabs = [['cuerpo','Cuerpo'],['cara','Cara'],['pelo','Pelo'],['ropa','Ropa'],['extra','Extras']];
+  if(o.pet!==false) tabs.push(['mascota','Mascota']);
+  host.innerHTML = '<div class="avprev"></div><div class="avtabs" role="tablist" aria-label="Partes del avatar"></div><div class="avpanel"></div>'
+    + '<div class="flex flex-wrap gap-2 mt-4"><button type="button" class="btn btn-ghost" data-avrnd>🎲 Al azar</button>'+(o.reset?'<button type="button" class="btn btn-ghost" data-avreset>Volver al original</button>':'')+'</div>';
+  const prev = host.querySelector('.avprev'), tb = host.querySelector('.avtabs'), pn = host.querySelector('.avpanel');
+  const swat = (k,list,cur,lab)=>'<div class="avsw">'+list.map((col,i)=>'<button type="button" data-k="'+k+'" data-v="'+i+'" class="'+(cur===i?'on':'')+'" aria-label="'+lab+' '+(i+1)+'" aria-pressed="'+(cur===i)+'" style="background:'+col+'"></button>').join('')+'</div>';
+  const opts = (k,list,cur)=>'<div class="avgrid">'+list.map(x=>'<button type="button" class="avopt'+(cur===x[0]?' on':'')+'" data-k="'+k+'" data-v="'+x[0]+'" aria-pressed="'+(cur===x[0])+'">'+x[1]+'</button>').join('')+'</div>';
+  const lb = t=>'<p class="avlab">'+t+'</p>';
+  function drawPrev(){ prev.innerHTML = avScene(C, {anim:!REDUCED, greet:true, name:o.name?o.name():'', label:o.label||'Avatar', t0:1.2, t1:4}); }
+  function drawPanel(){
+    let h = '';
+    if(T==='cuerpo') h = lb('Color de piel')+swat('skin',AV.SKIN,C.skin,'Piel')+lb('Fondo')+swat('bg',AV.BG.map(x=>x[0]),C.bg,'Fondo');
+    if(T==='cara') h = lb('Color de ojos')+swat('eye',AV.EYE,C.eye,'Ojos')+lb('Expresión')+opts('ex',AV.EX,C.ex)+lb('Detalles')+opts('fx',AV.FX,C.fx);
+    if(T==='pelo') h = lb('Peinado')+opts('hs',AV.HS,C.hs)+lb('Color de pelo')+swat('hc',AV.HAIR,C.hc,'Pelo');
+    if(T==='ropa') h = lb('Prenda')+opts('top',AV.TS,C.top)+lb('Estampado')+opts('pt',AV.PT,C.pt)+lb('Color de la ropa')+swat('tc',AV.TOPC,C.tc,'Ropa');
+    if(T==='extra') h = lb('Complemento')+opts('acc',AV.AC,C.acc);
+    if(T==='mascota') h = lb('Mascota')+opts('pet',AV.PS,C.pet)+(C.pet!=='ninguna' ? lb('Color del pelaje')+swat('pc',AV.PETC,C.pc,'Pelaje')+lb('Complemento de la mascota')+opts('pa',AV.PA,C.pa) : '');
+    pn.innerHTML = h;
+    tb.innerHTML = tabs.map(t=>'<button type="button" role="tab" class="chipf'+(T===t[0]?' on':'')+'" data-avt="'+t[0]+'" aria-selected="'+(T===t[0])+'">'+t[1]+'</button>').join('');
+  }
+  function changed(){ drawPrev(); if(o.onChange) o.onChange(C); }
+  host.addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b || !host.contains(b)) return;
+    if(b.dataset.avt){ T = b.dataset.avt; drawPanel(); return; }
+    if(b.hasAttribute('data-avrnd')){ Object.assign(C, avRand()); if(o.pet===false) C.pet='ninguna'; changed(); drawPanel(); return; }
+    if(b.hasAttribute('data-avreset')){ Object.assign(C, o.base||AV_DEF); changed(); drawPanel(); return; }
+    if(b.dataset.k){ const k=b.dataset.k; C[k] = (k in AV_NUM) ? +b.dataset.v : b.dataset.v; changed(); drawPanel(); }
+  });
+  drawPrev(); drawPanel();
+  return {refresh: drawPrev};
+}
+function mountLuciaCreator(){
+  const h = $('#luciaCreator'); if(!h) return;
+  const C = avCfg(DB.settings.lucia, LUCIA_DEF);
+  avCreator(h, C, {pet:false, reset:true, base:LUCIA_DEF, name:()=>'Lucía', label:'Lucía',
+    onChange:c=>{ DB.settings.lucia = Object.assign({}, c); save(); refreshLucia(); }});
 }
 
 /* =========================================================
    Datos (solo en este dispositivo)
    ========================================================= */
 const KEY = 'aprendiendo-con-lucia-v1';
-function emptyDB(){ return {version:1, students:[], custom:[], sessions:[], settings:{teacher:'', pin:'', theme:'auto'}}; }
+function emptyDB(){ return {version:1, students:[], custom:[], sessions:[], settings:{teacher:'', pin:'', theme:'auto', lucia:null}}; }
 function loadDB(){
   try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.version===1 && Array.isArray(d.students)) return Object.assign(emptyDB(), d, {settings:Object.assign(emptyDB().settings, d.settings||{})}); }catch(e){}
   return emptyDB();
@@ -1010,7 +1269,7 @@ function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(DB)); }
   catch(e){ if(!storageWarned){ storageWarned=true; toast('No se pueden guardar los datos en este navegador. Exporta una copia desde Ajustes.', 6000); } }
 }
-function newStudent(){ return {id:uid(), name:'', avatar:'🙂', color:COLORS[0], levels:{fon:1,sem:1,mor:1,pra:1,inf:1,cat:1}, adapt:{...DEF_ADAPT}, plan:{...DEF_PLAN}, notes:'', created:Date.now()}; }
+function newStudent(){ return {id:uid(), name:'', avatar:'🙂', av:avCfg(avRand()), color:COLORS[0], levels:{fon:1,sem:1,mor:1,pra:1,inf:1,cat:1}, adapt:{...DEF_ADAPT}, plan:{...DEF_PLAN}, notes:'', created:Date.now()}; }
 const getStudent = id => DB.students.find(s=>s.id===id);
 
 const LV = {1:L1, 2:L2, 3:L3};
@@ -1174,7 +1433,7 @@ function render(){ if(P) renderPlayer(); else renderShell(); }
 
 const NAV = [['home','Inicio','home'],['students','Alumnos','users'],['activities','Actividades','grid'],['games','Minijuegos','game'],['reports','Progreso','chart'],['settings','Ajustes','sliders']];
 function logo(){
-  return `<div class="flex items-center gap-3"><div class="w-10 h-10 shrink-0">${lucia()}</div>
+  return `<div class="flex items-center gap-3"><div class="w-10 h-10 shrink-0 js-lucia">${lucia('static')}</div>
     <div class="leading-tight"><div class="text-[10.5px] uppercase tracking-[.14em] text-soft font-semibold">Aprendiendo con</div><div class="font-extrabold text-[19px] tracking-tight">Lucía</div></div></div>`;
 }
 function renderShell(){
@@ -1207,6 +1466,7 @@ function renderShell(){
       ${NAV.map(n=>`<button class="tab-i ${v===n[0]?'active':''}" data-act="nav" data-view="${n[0]}" ${v===n[0]?'aria-current="page"':''}>${ic(n[2])}<span>${n[1]}</span></button>`).join('')}
     </nav>
   </div>`;
+  mountLuciaCreator();
 }
 function pageHead(title, sub, actions=''){
   return `<div class="flex flex-wrap items-end justify-between gap-4 mb-6"><div><h1 class="text-2xl md:text-[28px] font-extrabold tracking-tight">${title}</h1>${sub?`<p class="text-soft mt-1">${sub}</p>`:''}</div>${actions?`<div class="flex flex-wrap gap-2">${actions}</div>`:''}</div>`;
@@ -1223,7 +1483,7 @@ function viewHome(){
   let body;
   if(sel){
     body = `
-      <div class="hscroll mt-5">${st.map(s=>`<button class="stchip ${s.id===S.homeSel?'on':''}" data-act="sel-home" data-id="${s.id}"><span class="av" style="background:${s.color}22">${s.avatar}</span>${esc(s.name)}</button>`).join('')}
+      <div class="hscroll mt-5">${st.map(s=>`<button class="stchip ${s.id===S.homeSel?'on':''}" data-act="sel-home" data-id="${s.id}"><span class="av" style="background:${s.color}22">${avBadge(s)}</span>${esc(s.name)}</button>`).join('')}
         <button class="stchip" data-act="new-student" aria-label="Añadir alumno"><span class="av bg-panel2">${ic('plus','w-4 h-4')}</span>Añadir</button></div>
       <div class="mt-5 grid sm:grid-cols-2 gap-3">
         <div class="rounded-2xl p-4 bg-panel border border-line">
@@ -1268,7 +1528,7 @@ function viewHome(){
 
   return `
   <section class="hero p-5 sm:p-7 md:p-9" style="box-shadow:var(--shadow)">
-    <div class="flex items-center gap-4"><div class="w-14 h-14 md:w-16 md:h-16 shrink-0">${lucia()}</div>
+    <div class="flex items-center gap-4"><div class="w-14 h-14 md:w-16 md:h-16 shrink-0 js-lucia">${lucia('static')}</div>
       <div><p class="text-soft text-sm font-medium">${greeting()}${teacher?', '+esc(teacher):''}</p>
       <h1 class="text-2xl md:text-[32px] font-extrabold tracking-tight leading-tight mt-0.5">${sel?'¿Con quién trabajamos hoy?':'Te doy la bienvenida'}</h1></div></div>
     ${body}
@@ -1282,7 +1542,7 @@ function viewHome(){
     <div class="lg:col-span-3">
       <div class="flex items-center justify-between mb-3"><h2 class="text-lg font-bold">Últimas sesiones</h2>${recent.length?`<button class="btn btn-sm btn-ghost" data-act="nav" data-view="reports">Ver progreso</button>`:''}</div>
       <div class="card p-2">${recent.length ? recent.map(s=>{ const st=getStudent(s.studentId); const a=autoPct(s.results);
-        return `<button class="rowbtn" data-act="report-student" data-id="${s.studentId}"><span class="av" style="background:${st?st.color+'22':'var(--panel2)'}">${st?st.avatar:'👤'}</span>
+        return `<button class="rowbtn" data-act="report-student" data-id="${s.studentId}"><span class="av" style="background:${st?st.color+'22':'var(--panel2)'}">${st?avBadge(st):'👤'}</span>
           <span class="flex-1 min-w-0"><span class="block font-semibold truncate">${esc(st?st.name:'Alumno eliminado')}</span><span class="block text-sm text-soft">${fmtDateTime(s.date)} · ${s.results.length} respuestas${gamesOf(s).length?` · ${gamesOf(s).map(g=>GAMES[g.game].icon).join('')}`:''}</span></span>
           <span class="text-right"><span class="block font-bold">${a==null?'—':a+'%'}</span><span class="block text-xs text-soft">autonomía</span></span></button>`; }).join('')
         : `<div class="p-6 text-center text-soft text-sm">Todavía no hay sesiones. Cuando un alumno juegue, aquí verás el resumen.</div>`}</div>
@@ -1301,7 +1561,7 @@ function viewStudents(){
   (st.length ? `<div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">${st.map(s=>{
     const res = sessionResults(s.id), a = autoPct(res.slice(-40)), n = DB.sessions.filter(x=>x.studentId===s.id).length;
     return `<article class="card p-5 flex flex-col">
-      <div class="flex items-center gap-3"><span class="av av-lg" style="background:${s.color}22">${s.avatar}</span>
+      <div class="flex items-center gap-3"><span class="av av-lg" style="background:${s.color}22">${avBadge(s)}</span>
         <div class="min-w-0 flex-1"><h3 class="font-bold text-lg truncate">${esc(s.name)}</h3><p class="text-sm text-soft">${n} ${n===1?'sesión':'sesiones'} · autonomía ${a==null?'—':a+'%'}</p></div>
         <button class="iconbtn" data-act="edit-student" data-id="${s.id}" aria-label="Editar ${esc(s.name)}">${ic('edit')}</button></div>
       <div class="flex flex-wrap gap-1.5 mt-4">${MOD_KEYS.map(m=>modPill(m,` · N${s.levels[m]}`)).join('')}</div>
@@ -1320,16 +1580,20 @@ function studentEditor(id, tab='perfil'){
   const s = id ? getStudent(id) : newStudent();
   if(!s) return;
   const a = {...DEF_ADAPT, ...s.adapt}, p = {...DEF_PLAN, ...s.plan};
-  const tabs = [['perfil','Perfil'],['niveles','Niveles'],['adapt','Apoyos'],['sesion','Sesión']];
+  const tabs = [['perfil','Perfil'],['avatar','Avatar'],['niveles','Niveles'],['adapt','Apoyos'],['sesion','Sesión']];
   const m = openModal(`<form id="stf" class="flex flex-col min-h-0 h-full" novalidate>
     <div class="mhead"><h2>${id?'Editar alumno':'Nuevo alumno'}</h2><button type="button" class="iconbtn" data-act="modal-close" aria-label="Cerrar">${ic('x')}</button></div>
     <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" class="tabbtn ${k===tab?'on':''}" data-tab="${k}">${l}</button>`).join('')}</div>
     <div class="mbody">
       <section data-pane="perfil">
         <div class="pt-3"><label class="lab" for="sname">Nombre</label><input class="input" id="sname" name="sname" value="${esc(s.name)}" placeholder="Por ejemplo: Ana" autocomplete="off" maxlength="30"><p class="err mt-1" id="serr"></p></div>
-        <div class="mt-2"><div class="lab">Avatar</div><div class="emo-grid">${AVATARS.map(e=>`<label class="segopt"><input type="radio" name="avatar" value="${e}" ${e===s.avatar?'checked':''} aria-label="${e}"><span>${e}</span></label>`).join('')}</div></div>
+        <div class="mt-2"><div class="lab">Avatar</div><div class="flex items-center gap-3"><span class="av av-lg" id="avMini" style="background:var(--panel2)"></span><button type="button" class="btn btn-ghost" data-goav>Diseñar avatar y mascota</button></div></div>
         <div class="mt-5"><div class="lab">Color</div><div class="flex flex-wrap gap-2 colors">${COLORS.map(c=>`<label class="segopt"><input type="radio" name="color" value="${c}" ${c===s.color?'checked':''} aria-label="Color ${c}"><span><i class="color-dot" style="background:${c}"></i></span></label>`).join('')}</div></div>
         <div class="mt-5"><label class="lab" for="snotes">Objetivos y observaciones</label><textarea class="input" id="snotes" name="notes" placeholder="Por ejemplo: ampliar vocabulario de la cocina; trabajar peticiones con «por favor».">${esc(s.notes)}</textarea></div>
+      </section>
+      <section data-pane="avatar" hidden>
+        ${(id && !s.av) ? '<p class="text-sm text-soft pt-3">Este alumno usa un emoji. Si diseñas su avatar, lo sustituirá.</p>' : ''}
+        <div class="pt-3" id="avHost"></div>
       </section>
       <section data-pane="niveles" hidden>
         <p class="text-sm text-soft pt-3">Cada dimensión puede tener un nivel distinto. En «Progreso» verás cuándo conviene subir o bajar.</p>
@@ -1368,12 +1632,19 @@ function studentEditor(id, tab='perfil'){
   $$('[data-tab]',m).forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
   $$('[data-reward]',m).forEach(b=>b.onclick=()=>{ $('#rw',m).value=b.dataset.reward; });
   showTab(tab);
+  const avWork = avCfg(s.av || avRand());
+  let avDirty = !id;
+  const updateMini = ()=>{ const el=$('#avMini',m); if(el) el.innerHTML = (avDirty||s.av) ? avFace(avWork) : esc(s.avatar||'🙂'); };
+  const avc = avCreator($('#avHost',m), avWork, {name:()=>$('#sname',m).value.trim(), label:'Avatar del alumno', onChange:()=>{ avDirty=true; updateMini(); }});
+  $('#sname',m).addEventListener('input', ()=>avc.refresh());
+  $('[data-goav]',m).onclick = ()=>showTab('avatar');
+  updateMini();
   $('#stf',m).onsubmit = e=>{
     e.preventDefault();
     const f=e.target, d=new FormData(f);
     const name=(d.get('sname')||'').toString().trim();
     if(!name){ showTab('perfil'); $('#serr',m).textContent='Escribe un nombre.'; $('#sname',m).focus(); return; }
-    s.name=name; s.avatar=d.get('avatar')||'🙂'; s.color=d.get('color')||COLORS[0]; s.notes=(d.get('notes')||'').toString().trim();
+    s.name=name; s.avatar=s.avatar||'🙂'; if(avDirty) s.av=Object.assign({}, avWork); s.color=d.get('color')||COLORS[0]; s.notes=(d.get('notes')||'').toString().trim();
     MOD_KEYS.forEach(k=>s.levels[k]=+d.get('lv_'+k)||1);
     s.adapt={read:d.get('read')||'si', music:d.get('music')||'off', voiceCheck:d.get('voiceCheck')||'flex', opts:+d.get('opts')||3, text:(d.get('read')||'si')!=='no', voice:d.has('voice'), auto:d.has('auto'), rate:+d.get('rate')||0.85, font:d.get('font')||'m',
       calm:d.has('calm'), sfx:d.has('sfx'), helpAfter:+d.get('helpAfter'), tokens:+d.get('tokens'), reward:(d.get('reward')||'').toString().trim()||'⭐ Un premio'};
@@ -1552,8 +1823,8 @@ function viewReports(){
   const evo=sessions.slice(-14).map(x=>({l:fmtDate(x.date), v:autoPct(x.results)})).filter(p=>p.v!=null);
 
   return pageHead('Progreso', 'Autonomía = aciertos a la primera, sin ayudas.', `<button class="btn btn-ghost no-print" data-act="export-csv" data-id="${s.id}">${ic('download','w-4 h-4')} CSV</button><button class="btn btn-ghost no-print" data-act="print">${ic('print','w-4 h-4')} Imprimir</button>`) + `
-  <div class="hscroll mb-5 no-print">${st.map(x=>`<button class="stchip ${x.id===s.id?'on':''}" data-act="rep-sel" data-id="${x.id}"><span class="av" style="background:${x.color}22">${x.avatar}</span>${esc(x.name)}</button>`).join('')}</div>
-  <div class="card p-5 flex items-center gap-4 mb-5"><span class="av av-lg" style="background:${s.color}22">${s.avatar}</span><div class="flex-1 min-w-0"><h2 class="font-extrabold text-xl truncate">${esc(s.name)}</h2><p class="text-sm text-soft">${sessions.length} ${sessions.length===1?'sesión':'sesiones'} · ${R.length} respuestas${sessions.length?` · última: ${fmtDateTime(sessions[sessions.length-1].date)}`:''}</p></div>
+  <div class="hscroll mb-5 no-print">${st.map(x=>`<button class="stchip ${x.id===s.id?'on':''}" data-act="rep-sel" data-id="${x.id}"><span class="av" style="background:${x.color}22">${avBadge(x)}</span>${esc(x.name)}</button>`).join('')}</div>
+  <div class="card p-5 flex items-center gap-4 mb-5"><span class="av av-lg" style="background:${s.color}22">${avBadge(s)}</span><div class="flex-1 min-w-0"><h2 class="font-extrabold text-xl truncate">${esc(s.name)}</h2><p class="text-sm text-soft">${sessions.length} ${sessions.length===1?'sesión':'sesiones'} · ${R.length} respuestas${sessions.length?` · última: ${fmtDateTime(sessions[sessions.length-1].date)}`:''}</p></div>
     <button class="btn btn-primary no-print" data-act="start" data-id="${s.id}">${ic('play','w-4 h-4')} <span class="hidden sm:inline">Empezar sesión</span></button></div>
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
     ${[['Autónomas',h[0],'var(--ok)'],['Con una pista',h[1],'var(--sun)'],['Con modelado',h[2],'var(--pra)'],['Minijuegos a la primera',mini.r?`${mini.o}/${mini.r}`:'—','var(--sem)']].map(k=>`<div class="card kpi p-4"><div class="flex items-center gap-2 text-sm text-soft font-medium"><i class="w-2.5 h-2.5 rounded-full inline-block" style="background:${k[2]}"></i>${k[0]}</div><div class="v mt-1">${k[1]}</div></div>`).join('')}
@@ -1596,6 +1867,9 @@ function viewSettings(){
       ${field('Código para salir del modo alumno', `<input class="input sm:!w-40 text-center tracking-[.5em]" data-set="pin" value="${esc(s.pin)}" inputmode="numeric" maxlength="4" placeholder="····" aria-label="Código de 4 cifras">`, '4 cifras. Déjalo vacío para no pedirlo. Para salir hay que mantener pulsado «Salir».')}
       ${field('Apariencia', seg('theme',[['auto','Automática'],['light','Clara'],['dark','Oscura']], s.theme))}
     </section>
+    <section class="card p-5 lg:col-span-2"><h2 class="font-bold text-lg mb-1">Avatar de Lucía</h2>
+      <p class="text-sm text-soft">Es la ayudante que sale arriba a la izquierda y acompaña al alumno en las actividades. Los cambios se guardan solos.</p>
+      <div id="luciaCreator" class="mt-3 max-w-xl"></div></section>
     <section class="card p-5"><h2 class="font-bold text-lg mb-1">Voz</h2>
       <p class="text-sm text-soft">${esc(TTS.status())}</p>
       <button class="btn btn-primary mt-4" data-act="test-voice">${ic('speaker','w-4 h-4')} Probar la voz</button>
@@ -1623,7 +1897,7 @@ function viewSettings(){
         <li><b class="text-ink">Registro del tipo de ayuda</b> en cada respuesta para seguir la evolución.</li>
       </ul>
       <p class="text-xs text-soft mt-4">Si usas pictogramas de ARASAAC en tus actividades: autor Sergio Palao, propiedad del Gobierno de Aragón, licencia CC BY-NC-SA (uso no comercial y citando la fuente).</p>
-      <p class="text-xs text-soft mt-2">Aprendiendo con Lucía · versión 1.1</p>
+      <p class="text-xs text-soft mt-2">Aprendiendo con Lucía · versión 1.2</p>
     </section>
   </div>`;
 }
@@ -1637,7 +1911,7 @@ function viewGames(){
   const defLv = who ? ({...DEF_PLAN,...who.plan}).miniLevel : 1;
   return pageHead('Minijuegos','Juegos cortos para practicar, como premio o para cerrar la sesión. Si juega un alumno, cuentan en su progreso.') + `
   <div class="card p-4 mb-5"><div class="text-sm font-semibold mb-2">¿Quién juega?</div>
-    <div class="hscroll">${st.map(x=>`<button class="stchip ${x.id===S.gSel?'on':''}" data-act="g-who" data-id="${x.id}"><span class="av" style="background:${x.color}22">${x.avatar}</span>${esc(x.name)}</button>`).join('')}
+    <div class="hscroll">${st.map(x=>`<button class="stchip ${x.id===S.gSel?'on':''}" data-act="g-who" data-id="${x.id}"><span class="av" style="background:${x.color}22">${avBadge(x)}</span>${esc(x.name)}</button>`).join('')}
       <button class="stchip ${S.gSel==='guest'?'on':''}" data-act="g-who" data-id="guest"><span class="av bg-panel2">👤</span>Invitado</button></div>
     <p class="text-xs text-soft mt-2">${who?`Se usan los apoyos de ${esc(who.name)} (voz, opciones, fichas, ayudas) y los resultados se guardan en su progreso.`:'Modo prueba: se usan los apoyos por defecto y no se guardan resultados.'}</p></div>
   <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">${Object.entries(GAMES).map(([id,g])=>{ const lv=S.gLv[id]||defLv; return `<article class="card p-5 flex flex-col">
@@ -1678,7 +1952,7 @@ function pickItems(st, mod, lv, n, a){
 function markSeen(id){ if(!P || P.guest || !id) return; const st=P.st; st.recent=(st.recent||[]).filter(x=>x!==id); st.recent.push(id); if(st.recent.length>150) st.recent=st.recent.slice(-150); }
 
 function startSession(studentId, guest){
-  const st = guest ? Object.assign(newStudent(), {id:'guest', name:'invitado', avatar:'🙂'}) : getStudent(studentId);
+  const st = guest ? Object.assign(newStudent(), {id:'guest', name:'invitado', avatar:'🙂', av:null}) : getStudent(studentId);
   if(!st) return;
   closeModal();
   const a={...DEF_ADAPT, ...st.adapt}, plan={...DEF_PLAN, ...st.plan};
@@ -1701,6 +1975,8 @@ function tokenBoard(){
 function pframe(inner, title){
   const b=P.blocks[P.b];
   const accent = P.screen==='q' && b && b.kind==='q' ? MODS[b.mod].c : P.screen==='mini' && P.m ? GAMES[P.m.game].color : 'var(--brand)';
+  const mood=P.mood||''; P.mood='';
+  const comp = (P.st && P.st.av && (P.screen==='q' || (P.screen==='mini' && P.m && P.m.game!=='carrera'))) ? avCompanion(P.st, mood) : '';
   const canSkip = ['q','mini','rest'].includes(P.screen);
   const canAgenda = canSkip && P.blocks.length>1;
   APP.innerHTML = `<div class="player fs-${P.a.font}${P.a.calm?' calm':''}" style="--accent:${accent}"><div class="pwrap">
@@ -1712,7 +1988,7 @@ function pframe(inner, title){
         <button class="tbtn" data-act="p-music" aria-pressed="${!!P.musicOn}" title="Música de fondo">${P.musicOn?'🎵':'🔇'}</button>
       </div>
       ${tokenBoard()}</div>
-    ${inner}</div></div>`;
+    ${inner}${comp}</div></div>`;
   bindHold();
 }
 function bindHold(){
@@ -1752,8 +2028,8 @@ function scrAgenda(){
   const first = !P.blocks.some(b=>b.done) && P.b===0;
   const items=P.blocks.map((b,i)=>{ const s=b.done?'done':i===P.b?'now':'next', [e,n]=blockInfo(b);
     return `<li><button class="ag ${s}" data-act="p-jump" data-b="${i}" aria-label="Ir a ${esc(n)}"><span class="agi">${s==='done'?'✅':e}</span><span class="agt">${n}</span>${s==='now'?'<span class="agnow">Ahora</span>':s==='done'?'<span class="agre">Repetir</span>':''}</button></li>`; }).join('');
-  pframe(`<div class="pcard"><div class="lucia-row"><div class="lucia-big">${lucia()}</div><div class="bubble">${first?`Hola${P.guest?'':', '+esc(P.st.name)}. Hoy vamos a hacer esto:`:'¡Muy bien! Ahora toca esto:'}</div></div>
-    <ol class="agenda">${items}</ol>
+  pframe(`<div class="pcard"><div class="lucia-row"><div class="lucia-big">${lucia('greet')}</div><div class="bubble">${first?`Hola${P.guest?'':', '+esc(P.st.name)}. Hoy vamos a hacer esto:`:'¡Muy bien! Ahora toca esto:'}</div></div>
+    ${stScene()}<ol class="agenda">${items}</ol>
     <p class="aghint">Puedes tocar cualquier actividad para ir directamente a ella.</p>
     <div class="pactions"><button class="pbtn" data-act="p-go">${first?'Empezar':'Seguir'}</button></div></div>`, 'Mi agenda');
 }
@@ -1831,13 +2107,13 @@ function solveQuestion(extraSay){
   P.results.push({mod:b.mod, level:b.level, itemId:q.it.id, help, tries:q.errors+1, q:q.it.q, pic:q.it.scene||q.it.pic||''});
   markSeen(q.it.id);
   if(P.a.tokens) P.tokens=Math.min(P.a.tokens, P.tokens+1);
-  const p=pick(PRAISE); q.fb='✓ '+p+(q.it.expl?' '+q.it.expl:''); q.fbType='good';
+  const p=pick(PRAISE); q.fb='✓ '+p+(q.it.expl?' '+q.it.expl:''); q.fbType='good'; P.mood='hop';
   renderPlayer(); chime();
   setTimeout(()=>sayP((extraSay?extraSay+'. ':'')+p+(q.it.expl?' '+q.it.expl:'')), P.a.calm||!P.a.sfx?0:350);
 }
 function wrong(){
   const q=P.q;
-  q.errors++; q.stopRead=true;
+  q.errors++; q.stopRead=true; P.mood='tilt';
   if(P.a.helpAfter>0 && q.errors>=P.a.helpAfter && !q.hint){
     q.hint=true; q.fbType='hint';
     if(q.it.type==='choice'){ q.fb='Mira. Es esta.'; renderPlayer(); sayP('Mira. Es esta: '+q.it.opts[q.it.a][1]); }
@@ -1866,12 +2142,12 @@ function skipCurrent(){
   }
 }
 function scrRest(){
-  pframe(`<div class="pcard center"><div class="breathe" aria-hidden="true"></div><h2 style="font-size:1.4em;margin:0 0 6px">Descanso</h2>
+  pframe(`<div class="pcard center">${stScene('',true)}<div class="breathe" aria-hidden="true"></div><h2 style="font-size:1.4em;margin:0 0 6px">Descanso</h2>
     <p style="margin:0 0 6px">Coge aire despacio… y suéltalo.</p><p style="margin:0;color:var(--soft);font-size:.9em">Cuando estés preparado o preparada, toca «Seguir».</p>
     <div class="pactions"><button class="pbtn" data-act="p-rest-ok">Seguir</button></div></div>`, '🌿 Descanso');
 }
 function scrReward(){
-  pframe(`<div class="pcard center"><div class="bigemo">${esc(rewardEmoji(P.a.reward))}</div>
+  pframe(`<div class="pcard center">${stScene('hop',true)}<div class="bigemo">${esc(rewardEmoji(P.a.reward))}</div>
     <h2 style="font-size:1.5em;margin:12px 0 6px">¡Has conseguido todas las fichas!</h2><p style="margin:0">Tu premio: <b>${esc(rewardText(P.a.reward))}</b></p>
     <div class="pactions"><button class="pbtn" data-act="p-reward-ok">Seguir</button></div></div>`, '⭐ Premio');
 }
@@ -1880,7 +2156,7 @@ function scrEnd(){
   const stars = a==null ? 3 : a>=80 ? 3 : a>=50 ? 2 : 1;
   const mods=[...new Set(P.blocks.filter(b=>b.kind==='q').map(b=>b.mod))];
   const qb = mods.map(m=>{ const rs=r.filter(x=>x.mod===m); return rs.length?`<li class="ag"><span class="agi">${MODS[m].icon}</span><span class="agt">${MODS[m].name}</span><span>${rs.filter(x=>x.help===0).length} de ${rs.length} a la primera</span></li>`:''; }).join('');
-  pframe(`<div class="pcard center"><div class="lucia-big" style="margin:0 auto">${lucia()}</div>
+  pframe(`<div class="pcard center"><div class="lucia-big" style="margin:0 auto">${lucia('greet')}</div>${stScene('hop',true)}
     <div style="font-size:2.4em;letter-spacing:6px;margin:10px 0 0" aria-label="${stars} estrellas">${'⭐'.repeat(stars)}</div>
     <h2 style="font-size:1.6em;margin:6px 0 4px">¡Buen trabajo${P.guest?'':', '+esc(P.st.name)}!</h2>
     <p style="margin:0;color:var(--soft)">${P.free?'Has terminado el juego.':'Has terminado la sesión.'}</p>
@@ -1998,14 +2274,14 @@ function miniWin(o={}){
   const ok = o.ok!=null ? o.ok : M.errors===0;
   if(ok) M.rec.ok++;
   if(P.a.tokens) P.tokens=Math.min(P.a.tokens,P.tokens+1);
-  const p=pick(PRAISE); M.fb='✓ '+p; M.fbType='good';
+  const p=pick(PRAISE); M.fb='✓ '+p; M.fbType='good'; P.mood='hop';
   renderPlayer(); chime();
   setTimeout(()=>sayP((o.say?o.say+'. ':'')+p), P.a.calm||!P.a.sfx?0:350);
 }
 function miniFail(o){
   const M=P.m; M.errors++;
   if(P.a.helpAfter>0 && M.errors>=P.a.helpAfter) M.hint=true;
-  M.fb = M.hint ? o.h : o.t; M.fbType = M.hint ? 'hint' : 'try';
+  M.fb = M.hint ? o.h : o.t; M.fbType = M.hint ? 'hint' : 'try'; P.mood='tilt';
   renderPlayer(); sayP(M.hint ? (o.sh||o.h) : (o.st||o.t));
 }
 function optPick(M, i, winSay){
@@ -2237,18 +2513,18 @@ GAMES.carrera.round = M=>{
 };
 GAMES.carrera.render = M=>{
   if(M.phase==='choose'){
-    pframe(`<div class="pcard"><div class="lucia-row"><div class="lucia-big">${lucia()}</div><div class="bubble">¡Vamos a hacer una carrera! Elige tu personaje.</div></div>
-      <div class="opts n3" style="margin-top:18px">${RACE_CHARS.map(([e,t],i)=>`<div class="optbox"><button class="opt" data-act="g" data-op="char" data-i="${i}" aria-label="${t}"><span class="e"><span class="flip">${e}</span></span><span class="t">${t}</span></button></div>`).join('')}</div>
+    pframe(`<div class="pcard"><div class="lucia-row"><div class="lucia-big">${lucia()}</div><div class="bubble">¡Vamos a hacer una carrera! ${P.st&&P.st.av?'Tu mascota y tú vais a correr.':'Elige tu personaje.'}</div></div>
+      ${P.st&&P.st.av ? `${stScene()}<div class="pactions"><button class="pbtn" data-act="g" data-op="char" data-i="0">¡A correr!</button></div>` : `<div class="opts n3" style="margin-top:18px">${RACE_CHARS.map(([e,t],i)=>`<div class="optbox"><button class="opt" data-act="g" data-op="char" data-i="${i}" aria-label="${t}"><span class="e"><span class="flip">${e}</span></span><span class="t">${t}</span></button></div>`).join('')}</div>`}
       ${M.modeNote?`<p style="margin:16px 0 0;color:var(--soft);font-size:.85em">${esc(M.modeNote)}</p>`:''}</div>`, '🏁 La carrera');
     return;
   }
-  const ch=RACE_CHARS[M.char][0];
+  const hasAv=!!(P.st&&P.st.av), ch=hasAv?'':RACE_CHARS[M.char][0];
   pframe(`<div class="race" id="race" aria-hidden="true">
       <span class="sun">☀️</span><span class="cloud" style="left:12%;top:10%">☁️</span><span class="cloud" style="left:48%;top:4%">☁️</span>
       <div class="lane"></div>
       ${M.obst.map((o,i)=>`<span class="obst ${i<M.k?'cleared':''} ${i===M.k&&M.phase==='stop'?'next':''}" id="ob${i}" style="left:${RACE_X[i]}%">${o}</span>`).join('')}
       <span class="finishline" style="left:${RACE_META}%"></span><span class="metaflag" style="left:${RACE_META}%">🏁</span>
-      <span class="runner" id="runner" style="left:${M.x}%"><span class="bob"><span class="flip">${ch}</span></span></span>
+      <span class="runner" id="runner" style="left:${M.x}%"><span class="bob">${hasAv?avRunner(P.st):`<span class="flip">${ch}</span>`}</span></span>
       ${M.phase==='done'?'<div class="rmsg">¡Buen trabajo!</div>':''}
     </div>
     <div id="rcard">${raceCard(M)}</div>`, '🏁 La carrera');
@@ -2422,7 +2698,7 @@ function scrMini(){
 }
 function startGame(gameId, level, sid, own){
   const guest = sid==='guest' || !getStudent(sid);
-  const st = guest ? Object.assign(newStudent(), {id:'guest', name:'invitado'}) : getStudent(sid);
+  const st = guest ? Object.assign(newStudent(), {id:'guest', name:'invitado', avatar:'🙂', av:null}) : getStudent(sid);
   P = {st, a:{...DEF_ADAPT, ...st.adapt}, guest, blocks:[{kind:'mini', game:gameId, level, own:!!own}], b:0, screen:'mini', tokens:0, results:[], skipped:[], minis:[], start:Date.now(), saved:false, free:true};
   if(P.a.music && P.a.music!=='off'){ P.musicOn=true; MUSIC.start(P.a.music); }
   window.scrollTo(0,0); startMini();
