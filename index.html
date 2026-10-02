@@ -315,6 +315,7 @@ button.cell:active{transform:scale(.97)}
 .race .lane{position:absolute;left:0;right:0;bottom:21%;height:8px;background:rgba(255,255,255,.45)}
 .runner{position:absolute;bottom:22%;font-size:clamp(38px,8.5vw,78px);line-height:1;transform:translateX(-50%);z-index:3}
 .runner .bob{display:inline-block}
+.runner.pair{font-size:clamp(26px,5.4vw,60px)}
 .runner.walking .bob{animation:bob .42s ease-in-out infinite}
 .runner.jump .bob{animation:rjump .8s ease-out}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9%)}}
@@ -338,7 +339,7 @@ button.cell:active{transform:scale(.97)}
 @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}50%{box-shadow:0 0 0 14px color-mix(in srgb,var(--accent) 0%,transparent)}}
 .rinfo{flex:1;min-width:0}
 .rstatus{font-weight:700;font-size:1.05em}
-.rstatus.listen{color:var(--accent)}
+.rstatus.is-listen{color:var(--accent)}
 .rstatus.try{color:var(--soft)}
 .rstatus.hint{color:var(--hint)}
 .rstatus.warn{color:var(--soft);font-size:.85em;font-weight:400}
@@ -409,6 +410,11 @@ button.ag:active{transform:scale(.99)}
 .rav svg{display:block}
 .rme svg{width:1.3em;height:1.3em}
 .rpet svg{width:1.05em;height:1.08em}
+.rav.solo .rpet svg{width:1.5em;height:1.55em}
+.opt .e svg{width:1.3em;height:1.3em;vertical-align:middle}
+.opt .e .pair{display:inline-flex;align-items:flex-end;gap:.05em}
+.opt .e .pair svg:last-child{width:1.05em;height:1.08em}
+.rsub{margin:18px 0 0;font-weight:700;color:var(--soft);font-size:.9em}
 </style>
 </head>
 <body>
@@ -973,7 +979,7 @@ const REWARDS = ['🎵 Música','🧩 Minijuego','☕ Descanso','📺 Un vídeo'
 
 const rewardEmoji = r => { const m=String(r).match(/^\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*/u); return m?m[0]:'🎉'; };
 const rewardText = r => String(r).replace(/^\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*\s*/u,'') || 'un premio';
-const DEF_ADAPT = {read:'si', music:'off', voiceCheck:'flex', opts:3, text:true, voice:true, auto:true, rate:0.85, voiceId:'', font:'m', calm:false, sfx:true, helpAfter:2, tokens:5, reward:'🎵 Música'};
+const DEF_ADAPT = {read:'si', music:'off', voiceCheck:'flex', opts:3, text:true, voice:true, auto:true, rate:0.85, voiceId:'', raceRunner:'pick', font:'m', calm:false, sfx:true, helpAfter:2, tokens:5, reward:'🎵 Música'};
 const DEF_PLAN = {fon:5, sem:5, mor:5, pra:5, inf:3, cat:3, mini:true, miniGame:'compra', miniLevel:1, rest:false};
 
 /* =========================================================
@@ -1210,9 +1216,10 @@ function avCompanion(st, mood){
   const pet = hasPet ? '<span class="cpet"><svg viewBox="-60 -118 120 124" aria-hidden="true">'+avPet(c,{anim:an, mood:mood})+'</svg></span>' : '';
   return '<div class="compbar" aria-hidden="true">'+face+pet+'</div>';
 }
-function avRunner(st){
-  const c = avCfg(st.av), an = avAnimOn();
-  const pet = c.pet!=='ninguna' ? '<span class="rpet"><svg viewBox="-60 -118 120 124" aria-hidden="true">'+avPet(c,{anim:an})+'</svg></span>' : '';
+function avRunner(st, who){
+  const c = avCfg(st.av), an = avAnimOn(), hasPet = c.pet!=='ninguna';
+  const pet = hasPet && who!=='me' ? '<span class="rpet"><svg viewBox="-60 -118 120 124" aria-hidden="true">'+avPet(c,{anim:an})+'</svg></span>' : '';
+  if(who==='pet' && hasPet) return '<span class="rav solo">'+pet+'</span>';
   return '<span class="rav">'+pet+'<span class="rme">'+avBadgeSVG(c,{anim:an, label:'Tu avatar'})+'</span></span>';
 }
 
@@ -1280,6 +1287,7 @@ function migrate(){
     s.adapt = Object.assign({}, DEF_ADAPT, old);
     if(!old.read) s.adapt.read = old.text===false ? 'no' : 'si';
     if(typeof s.adapt.voiceId!=='string') s.adapt.voiceId='';
+    if(s.adapt.raceRunner!=='fixed') s.adapt.raceRunner='pick';
     if(!Array.isArray(s.recent)) s.recent=[];
   });
 }
@@ -1662,6 +1670,7 @@ function studentEditor(id, tab='perfil'){
         ${field('Tipo de voz', `<div class="flex gap-2 flex-wrap items-center"><select class="input sm:!w-72" name="voiceId" data-voicesel="st" data-auto="Usar la voz general (Ajustes)" aria-label="Tipo de voz">${voiceOptions(a.voiceId,'Usar la voz general (Ajustes)')}</select><button type="button" class="btn" data-act="test-voice-st">${ic('speaker','w-4 h-4')} Probar</button></div>`, 'Solo las voces en español que tiene este dispositivo.')}
         ${field('Tamaño de letra', seg('font',[['m','Normal'],['l','Grande'],['xl','Muy grande']],a.font))}
         ${field('Mostrar la respuesta correcta tras', seg('helpAfter',[[1,'1 error'],[2,'2 errores'],[3,'3 errores'],[0,'Nunca']],a.helpAfter), 'Ayuda graduada: primero se apagan opciones, después se señala la correcta.')}
+        ${field('Carrera: quién corre', seg('raceRunner',[['pick','Que elija'],['fixed','Su avatar y mascota']],a.raceRunner), '«Que elija»: el alumno decide si corre él, su mascota o los dos (o un personaje suelto). «Su avatar y mascota»: corren siempre los dos, sin elegir.')}
         ${field('Carrera: cómo se valida la voz', seg('voiceCheck',[['detect','Detectar voz'],['flex','Flexible'],['exact','Exacta']],a.voiceCheck), '«Detectar voz» acepta cualquier intento vocal (sin internet). «Flexible» acepta palabras parecidas. Siempre puedes validar tú con «Bien dicho».')}
         ${field('Modo calma', sw('calm',a.calm,'Modo calma'), 'Sin animaciones ni efectos. Para perfiles con sensibilidad sensorial.')}
         ${field('Efectos de sonido al acertar', sw('sfx',a.sfx,'Efectos de sonido'))}
@@ -1700,7 +1709,7 @@ function studentEditor(id, tab='perfil'){
     if(!name){ showTab('perfil'); $('#serr',m).textContent='Escribe un nombre.'; $('#sname',m).focus(); return; }
     s.name=name; s.avatar=s.avatar||'🙂'; if(avDirty) s.av=Object.assign({}, avWork); s.color=d.get('color')||COLORS[0]; s.notes=(d.get('notes')||'').toString().trim();
     MOD_KEYS.forEach(k=>s.levels[k]=+d.get('lv_'+k)||1);
-    s.adapt={read:d.get('read')||'si', music:d.get('music')||'off', voiceCheck:d.get('voiceCheck')||'flex', opts:+d.get('opts')||3, text:(d.get('read')||'si')!=='no', voice:d.has('voice'), auto:d.has('auto'), rate:+d.get('rate')||0.85, voiceId:(d.get('voiceId')||'').toString(), font:d.get('font')||'m',
+    s.adapt={read:d.get('read')||'si', music:d.get('music')||'off', voiceCheck:d.get('voiceCheck')||'flex', opts:+d.get('opts')||3, text:(d.get('read')||'si')!=='no', voice:d.has('voice'), auto:d.has('auto'), rate:+d.get('rate')||0.85, voiceId:(d.get('voiceId')||'').toString(), raceRunner:d.get('raceRunner')==='fixed'?'fixed':'pick', font:d.get('font')||'m',
       calm:d.has('calm'), sfx:d.has('sfx'), helpAfter:+d.get('helpAfter'), tokens:+d.get('tokens'), reward:(d.get('reward')||'').toString().trim()||'⭐ Un premio'};
     s.plan={mini:d.has('mini'), miniGame:d.get('miniGame')||'compra', miniLevel:+d.get('miniLevel')||1, rest:d.has('rest')};
     MOD_KEYS.forEach(k=>s.plan[k]=+d.get('pl_'+k));
@@ -2504,7 +2513,9 @@ const RACE_WORDS = {
   3:[['🌞','Buenos días'],['💧','Quiero agua, por favor'],['👋','Hasta mañana'],['🍽️','Tengo hambre'],['🙏','Muchas gracias'],['🚪','Abre la puerta'],['🐕','El perro corre'],['🎵','Me gusta la música'],['🍕','Quiero pizza'],['🚌','Voy en autobús'],['😴','Tengo sueño'],['🙋','¿Me ayudas, por favor?'],['☀️','Hoy hace sol'],['🏠','Me voy a casa']]
 };
 const RACE_N = 5, RACE_START = 5, RACE_META = 94;
-const RACE_X = Array.from({length:RACE_N},(_,i)=>Math.round(20+i*(82-20)/(RACE_N-1)));
+const RACE_X = Array.from({length:RACE_N},(_,i)=>Math.round(28+i*(86-28)/(RACE_N-1)));
+/* Separación del corredor al obstáculo y posición de salida según quién corre (avatar y mascota ocupan más). */
+const RACE_GAP = {both:12, me:10, pet:11}, RACE_X0 = {both:9, me:8, pet:9}, RACE_LAND = {both:2, me:3, pet:3};
 
 function raceCustomWords(){
   return String(DB.settings.raceWords||'').split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
@@ -2567,20 +2578,49 @@ GAMES.carrera.round = M=>{
   M.modeNote = want!=='detect' && !MIC.SR ? 'Este navegador no reconoce palabras: basta con que se oiga la voz.' : '';
   M.say='Elige tu personaje.';
 };
+/* La carrera: quién corre. pick = el alumno elige; fixed = avatar y mascota sin elegir. */
+function raceFixed(){ return !!(P.st && P.st.av && P.a.raceRunner==='fixed'); }
+function racePreview(st, k){
+  if(k==='me') return avFace(avCfg(st.av));
+  const c = avCfg(st.av), pet = '<svg viewBox="-60 -118 120 124" aria-hidden="true">'+avPet(c,{anim:false})+'</svg>';
+  if(k==='pet') return pet;
+  return '<span class="pair">'+avFace(c)+pet+'</span>';
+}
+function raceChoose(){
+  const st = P.st, hasAv = !!(st && st.av);
+  if(raceFixed()) return `${stScene()}<div class="pactions"><button class="pbtn" data-act="g" data-op="char" data-k="both">¡A correr!</button></div>`;
+  const btn = (k,i,label,inner)=>`<div class="optbox"><button class="opt" data-act="g" data-op="char" data-k="${k}" data-i="${i}" aria-label="${esc(label)}"><span class="e" aria-hidden="true">${inner}</span><span class="t">${esc(label)}</span></button></div>`;
+  const mine = [];
+  if(hasAv){
+    const hasPet = avCfg(st.av).pet!=='ninguna';
+    if(hasPet) mine.push(btn('both',0,'Los dos',racePreview(st,'both')));
+    mine.push(btn('me',0,'Yo',racePreview(st,'me')));
+    if(hasPet) mine.push(btn('pet',0,'Mi mascota',racePreview(st,'pet')));
+  } else if(st && !P.guest && st.avatar){
+    mine.push(btn('myemoji',0,'Yo',`<span>${esc(st.avatar)}</span>`));
+  }
+  const others = RACE_CHARS.map(([e,t],i)=>btn('emoji',i,t,`<span class="flip">${e}</span>`)).join('');
+  return `${mine.length?`<div class="opts n3" style="margin-top:18px">${mine.join('')}</div><p class="rsub">Otros personajes</p>`:''}<div class="opts n3" style="margin-top:${mine.length?'8':'18'}px">${others}</div>`;
+}
+function raceRunnerHTML(M){
+  const st = P.st;
+  if(M.rk==='both' || M.rk==='me' || M.rk==='pet') return avRunner(st, M.rk);
+  if(M.rk==='myemoji') return `<span>${esc(st.avatar||'🙂')}</span>`;
+  return `<span class="flip">${RACE_CHARS[M.char||0][0]}</span>`;
+}
 GAMES.carrera.render = M=>{
   if(M.phase==='choose'){
-    pframe(`<div class="pcard"><div class="lucia-row"><div class="lucia-big">${lucia()}</div><div class="bubble">¡Vamos a hacer una carrera! ${P.st&&P.st.av?'Tu mascota y tú vais a correr.':'Elige tu personaje.'}</div></div>
-      ${P.st&&P.st.av ? `${stScene()}<div class="pactions"><button class="pbtn" data-act="g" data-op="char" data-i="0">¡A correr!</button></div>` : `<div class="opts n3" style="margin-top:18px">${RACE_CHARS.map(([e,t],i)=>`<div class="optbox"><button class="opt" data-act="g" data-op="char" data-i="${i}" aria-label="${t}"><span class="e"><span class="flip">${e}</span></span><span class="t">${t}</span></button></div>`).join('')}</div>`}
+    pframe(`<div class="pcard"><div class="lucia-row"><div class="lucia-big">${lucia()}</div><div class="bubble">¡Vamos a hacer una carrera! ${raceFixed()?'Tu mascota y tú vais a correr.':'Elige quién corre.'}</div></div>
+      ${raceChoose()}
       ${M.modeNote?`<p style="margin:16px 0 0;color:var(--soft);font-size:.85em">${esc(M.modeNote)}</p>`:''}</div>`, '🏁 La carrera');
     return;
   }
-  const hasAv=!!(P.st&&P.st.av), ch=hasAv?'':RACE_CHARS[M.char][0];
   pframe(`<div class="race" id="race" aria-hidden="true">
       <span class="sun">☀️</span><span class="cloud" style="left:12%;top:10%">☁️</span><span class="cloud" style="left:48%;top:4%">☁️</span>
       <div class="lane"></div>
       ${M.obst.map((o,i)=>`<span class="obst ${i<M.k?'cleared':''} ${i===M.k&&M.phase==='stop'?'next':''}" id="ob${i}" style="left:${RACE_X[i]}%">${o}</span>`).join('')}
       <span class="finishline" style="left:${RACE_META}%"></span><span class="metaflag" style="left:${RACE_META}%">🏁</span>
-      <span class="runner" id="runner" style="left:${M.x}%"><span class="bob">${hasAv?avRunner(P.st):`<span class="flip">${ch}</span>`}</span></span>
+      <span class="runner ${M.rk==='both'?'pair':''}" id="runner" style="left:${M.x}%"><span class="bob">${raceRunnerHTML(M)}</span></span>
       ${M.phase==='done'?'<div class="rmsg">¡Buen trabajo!</div>':''}
     </div>
     <div id="rcard">${raceCard(M)}</div>`, '🏁 La carrera');
@@ -2597,7 +2637,7 @@ function raceCard(M){
     <div class="rword"><span class="e" aria-hidden="true">${e}</span><span class="w">${esc(w)}</span>${P.a.voice?`<button class="listen" data-act="g" data-op="hear" aria-label="Escuchar la palabra">${ic('speaker')}</button>`:''}</div>
     <div class="rmicrow">
       ${manual?'':`<button class="rmic ${M.listening?'on':''}" data-act="g" data-op="mic" aria-label="${M.listening?'Parar el micrófono':'Hablar'}">🎤</button>`}
-      <div class="rinfo"><div class="rstatus ${M.statusType||''}">${esc(status)}</div>${M.mode==='detect'&&!manual?`<div class="rlevel"><i id="rlevel"></i></div>`:''}${M.heard?`<div class="rheard">Lucía ha oído: «${esc(M.heard)}»</div>`:''}</div>
+      <div class="rinfo"><div class="rstatus ${M.statusType==='listen'?'is-listen':(M.statusType||'')}">${esc(status)}</div>${M.mode==='detect'&&!manual?`<div class="rlevel"><i id="rlevel"></i></div>`:''}${M.heard?`<div class="rheard">Lucía ha oído: «${esc(M.heard)}»</div>`:''}</div>
     </div>
     <div class="rfoot"><button class="rval" data-act="g" data-op="validate">✓ Bien dicho <span>(profesional)</span></button></div>
   </div>`;
@@ -2605,7 +2645,7 @@ function raceCard(M){
 function raceUpdateCard(M){ const c=$('#rcard'); if(c) c.innerHTML=raceCard(M); }
 function raceWalk(M){
   M.phase='run'; raceUpdateCard(M);
-  const target = M.k<RACE_N ? RACE_X[M.k]-6 : RACE_META;
+  const target = M.k<RACE_N ? Math.max(M.x, RACE_X[M.k]-(RACE_GAP[M.rk]||6)) : RACE_META;
   const dist = Math.max(0, target-M.x), ms = Math.max(350, dist*120);
   const r=$('#runner'); if(!r) return;
   r.classList.add('walking'); r.style.transition=`left ${ms}ms linear`;
@@ -2685,7 +2725,7 @@ function raceSkip(M){
   if(M.phase!=='stop') return;
   MIC.stopAll(); M.listening=false; MUSIC.mute(false); TTS.stop();
   M.phase='jump'; raceUpdateCard(M);
-  const r=$('#runner'), land=RACE_X[M.k]+6;
+  const r=$('#runner'), land=RACE_X[M.k]+(RACE_LAND[M.rk]||6);
   if(r){ r.style.transition='left 800ms ease-in-out'; r.classList.add('jump'); requestAnimationFrame(()=>{ r.style.left=land+'%'; }); }
   M.x=land;
   raceT(M, ()=>{ if(r) r.classList.remove('jump'); const ob=$('#ob'+M.k); if(ob){ ob.classList.remove('next'); ob.classList.add('cleared'); } M.k++; raceWalk(M); }, 850);
@@ -2701,7 +2741,7 @@ function raceOK(M, how){
   const p=pick(['¡Muy bien!','¡Genial!','¡Salta!','¡Estupendo!']);
   raceUpdateCard(M); $('#rcard .rrun b') && ($('#rcard .rrun b').textContent=p);
   confetti(P.a.calm?10:34); chime(); sayP(p);
-  const r=$('#runner'), land=RACE_X[M.k]+6;
+  const r=$('#runner'), land=RACE_X[M.k]+(RACE_LAND[M.rk]||6);
   if(r){ r.style.transition='left 800ms ease-in-out'; r.classList.remove('walking'); r.classList.add('jump'); requestAnimationFrame(()=>{ r.style.left=land+'%'; }); }
   M.x=land;
   raceT(M, ()=>{ if(r) r.classList.remove('jump'); const ob=$('#ob'+M.k); if(ob){ ob.classList.remove('next'); ob.classList.add('cleared'); } M.k++; raceWalk(M); }, 850);
@@ -2727,7 +2767,7 @@ function confetti(n){
   }
 }
 GAMES.carrera.act = (M,op,el)=>{
-  if(op==='char'){ if(M.phase!=='choose') return; M.char=+el.dataset.i; M.phase='run'; renderPlayer(); const go=()=>{ if(M.started) return; M.started=true; raceWalk(M); }; sayP('¡Preparados, listos, ya!', go); raceT(M, go, 4500); return; }
+  if(op==='char'){ if(M.phase!=='choose') return; M.rk=el.dataset.k||'emoji'; M.char=+el.dataset.i||0; M.x=RACE_X0[M.rk]||RACE_START; M.phase='run'; renderPlayer(); const go=()=>{ if(M.started) return; M.started=true; raceWalk(M); }; sayP('¡Preparados, listos, ya!', go); raceT(M, go, 4500); return; }
   if(M.phase!=='stop') return;
   if(op==='hear'){ MIC.stopAll(); M.listening=false; M.status=''; raceUpdateCard(M); TTS.speak(M.items[M.k][1], P.a.rate); }
   else if(op==='mic'){ if(M.listening){ MIC.stopAll(); M.listening=false; raceSetStatus(M,'Toca el micrófono y di la palabra.'); } else raceListen(M); }
